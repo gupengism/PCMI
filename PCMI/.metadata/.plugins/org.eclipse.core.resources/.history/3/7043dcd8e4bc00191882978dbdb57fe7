@@ -1,0 +1,55 @@
+//package PCMI;
+//
+//public class Exam {
+//
+//}
+
+
+package PCMI;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.junit.Assert;
+
+
+public class Exam  {
+    public static void main(String[] args) throws InterruptedException {
+        WebDriver driver = new FirefoxDriver();
+        WebDriverWait wait = new WebDriverWait(driver, 30);
+        
+        driver.get("https://qa-alpha-auto.pcrsdev.com/");
+        
+        driver.findElement(By.xpath("//span[text()='Email:']//ancestor::tr[1]//input")).sendKeys("tester@pcmi.com");
+        driver.findElement(By.xpath("//span[text()='Login']")).click();      
+        
+        WebElement errorMessage = driver.findElement(By.xpath("//*[@id='dialogContentDiv']//label"));
+        wait.until(ExpectedConditions.visibilityOf(errorMessage));
+        Assert.assertEquals(errorMessage.getText(), "Password is required.");
+        driver.findElement(By.xpath("//button//span[text()='OK']")).click();
+                
+        WebElement passwordField = driver.findElement(By.xpath("//span[text()='Password:']//ancestor::tr[1]//input"));
+        wait.until(ExpectedConditions.visibilityOf(passwordField));
+        passwordField.sendKeys("qQadfi4$2");        
+        driver.findElement(By.xpath("//span[text()='Login']")).click();
+      
+        wait.until(new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver wdriver) {
+                return ((JavascriptExecutor) driver).executeScript(
+                    "return document.readyState"
+                ).equals("complete");
+            }
+        });
+
+
+//        WebElement mainPageTitle = driver.findElement(By.xpath("//a[text()='TPA NON-FL RETAIL & GROSS RESERVE (ADPTEST)']"));
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//a[text()='TPA NON-FL RETAIL & GROSS RESERVE (ADPTEST)']"))));
+        
+        driver.quit();
+    }
+}

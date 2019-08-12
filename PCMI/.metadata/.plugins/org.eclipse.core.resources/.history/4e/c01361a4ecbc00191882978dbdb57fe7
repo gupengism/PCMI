@@ -1,0 +1,109 @@
+//package PCMI;
+//
+//public class Exam {
+//
+//}
+
+
+package PCMI;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.Assert;
+
+
+public class Exam  {
+    public static void main(String[] args) throws InterruptedException {
+        WebDriver driver = new FirefoxDriver();
+        WebDriverWait wait = new WebDriverWait(driver, 30);
+//        FluentWait<WebDriver> fluentWait = new FluentWait<>(driver)
+//                .withTimeout(30, TimeUnit.SECONDS)
+//                .pollingEvery(200, TimeUnit.MILLISECONDS)
+//                .ignoring(NoSuchElementException.class);
+        
+        driver.get("https://qa-alpha-auto.pcrsdev.com/");
+        
+        driver.findElement(By.xpath("//span[text()='Email:']//ancestor::tr[1]//input")).sendKeys("tester@pcmi.com");
+        driver.findElement(By.xpath("//span[text()='Login']")).click();      
+        
+        WebElement errorMessage = driver.findElement(By.xpath("//*[@id='dialogContentDiv']//label"));
+        wait.until(ExpectedConditions.visibilityOf(errorMessage));
+        Assert.assertEquals(errorMessage.getText(), "Password is required.");
+        driver.findElement(By.xpath("//button//span[text()='OK']")).click();
+                
+        WebElement passwordField = driver.findElement(By.xpath("//span[text()='Password:']//ancestor::tr[1]//input"));
+        wait.until(ExpectedConditions.visibilityOf(passwordField));
+        passwordField.sendKeys("qQadfi4$2");        
+        driver.findElement(By.xpath("//span[text()='Login']")).click();
+      
+        wait.until(new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver wdriver) {
+                return ((JavascriptExecutor) driver).executeScript(
+                    "return document.readyState"
+                ).equals("complete");
+            }
+        });
+           
+//        wait.until(ExpectedConditions.visibilityOf((WebElement) By.xpath("//a[text()='TPA NON-FL RETAIL & GROSS RESERVE (ADPTEST)']")));  
+        WebElement addContract = (new WebDriverWait(driver, 10))
+        		   .until(ExpectedConditions.elementToBeClickable(By.xpath("//a[@title='Add Contract']")));
+        addContract.click();
+             
+        wait.until(new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver wdriver) {
+                return ((JavascriptExecutor) driver).executeScript(
+                    "return document.readyState"
+                ).equals("complete");
+            }
+        });
+        
+//        driver.findElement(By.cssSelector("body")).sendKeys(Keys.CONTROL +"t");
+        
+//        WebElement addContract = (new WebDriverWait(driver, 10))
+//     		   .until(ExpectedConditions.elementSelectionStateToBe(By.xpath("//a[@title='Add Contract']"), true));
+//     addContract.click();
+        ArrayList<String> tabs_windows = new ArrayList<String> (driver.getWindowHandles());
+        driver.switchTo().window(tabs_windows.get(1));
+        
+        wait.until(new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver wdriver) {
+                return ((JavascriptExecutor) driver).executeScript(
+                    "return document.readyState"
+                ).equals("complete");
+            }
+        });
+        
+        WebElement saleOdometer = driver.findElement(By.xpath("//label[text()='Sale Odometer']//parent::*//input"));
+        wait.until(ExpectedConditions.visibilityOf(saleOdometer));
+        saleOdometer.sendKeys("100");
+        driver.findElement(By.xpath("//label[text()='VIN']//parent::*//input")).sendKeys("3N4BB41D7W2794739");        
+        
+        WebElement financeType = driver.findElement(By.xpath("//label[contains(.,'Finance Type')]//parent::*//input"));
+        financeType.sendKeys("Loan");               
+//        financeType.sendKeys(Keys.TAB);
+        
+        driver.findElement(By.xpath("//label[contains(.,'Amount Financed')]//parent::*//input")).sendKeys("10000");
+        driver.findElement(By.xpath("//label[contains(.,'Finance/Lease Term')]//parent::*//input")).sendKeys("26");
+        driver.findElement(By.xpath("//label[contains(.,'Lender Search')]//parent::*//input")).sendKeys("LN00000012");
+        financeType.sendKeys(Keys.TAB);
+        
+      //
+      //
+        
+//        driver.quit();
+    }
+}
